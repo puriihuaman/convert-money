@@ -85,17 +85,23 @@ para el correcto funcionamiento, puedes ejecutar la aplicación.
 
 La aplicación mostrara un menu al usuario con las siguientes opciones:
 
-1. **Menu de conversión**  
+1. **Menu de conversión**
+
    ![Menu](./resources/static/images/menu-app.png)
 2. **Proceso de conversión**
     - El usuario debe ingresar la opción a realizar.
     - El usuario debe ingresar el monto a convertir.
     - Podrá realizar multiples operaciones dentro del menú.
-      ![Data entry](./resources/static/images/data-entry.png)
+
+   ![Data entry](./resources/static/images/data-entry.png)
 3. **Ejemplo de respuesta**
+
    ![Response](./resources/static/images/response.png)
 4. **Salida**
    Al elegir la opción 0, el usuario saldrá del sistema y se mostrará un mensaje de despedida.
+   
+   ![Goodbye](./resources/static/images/goodbye.png)
+
 
 ## 📨 Contacto
 
