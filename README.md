@@ -37,10 +37,14 @@ El proyecto sigue una estructura básica de carpetas.
 ```
 convert-money/
 ├── src/
+│   ├── controller/  # Clase para iniciar la applicación
 │   ├── dto/         # Clases para transferencia de datos
 │   ├── model/       # Clases de dominio del negocio
 │   └── Main.java    # Punto de entrada de la aplicación
 ├── resources/       # Recursos
+│   └── static/
+│       ├── history/ # Archivo que guarda los cambios de divisas.
+│       └── images/  # Imagenes de la aplicación
 ├── README.md
 ├── .env.demo        # Ejemplo de archivo de variables de entorno
 └── .gitignore
@@ -86,20 +90,48 @@ La aplicación mostrara un menu al usuario con las siguientes opciones:
 
 1. **Menu de conversión**
 
-   ![Menu](./resources/static/images/menu-app.png)
+   ![Menu](./resources/static/images/menu.png)
 2. **Proceso de conversión**
     - El usuario debe ingresar la opción a realizar.
     - El usuario debe ingresar el monto a convertir.
     - Podrá realizar multiples operaciones dentro del menú.
 
    ![Data entry](./resources/static/images/data-entry.png)
-3. **Ejemplo de respuesta**
+3. **Ejemplo de conversión**
 
    ![Response](./resources/static/images/response.png)
-4. **Salida**  
+4. **Ejemplo de historial**
+
+   ![History](./resources/static/images/history.png)
+5. **Salida**  
    Al elegir la opción 0, el usuario saldrá del sistema y se mostrará un mensaje de despedida.
 
    ![Goodbye](./resources/static/images/goodbye.png)
+6. **Ejemplo del historial de cambios en formato JSON**
+   ```json
+   [
+        {
+            "money": {
+                "base_code": "USD",
+                "target_code": "PEN",
+                "conversion_rate": 3.679,
+                "conversion_result": 183.95,
+                "amount": 50.0
+            },
+            "timestamp": "2025-04-26T21:32:48.409664100"
+        },
+        {
+            "money": {
+                "base_code": "USD",
+                "target_code": "BRL",
+                "conversion_rate": 5.6828,
+                "conversion_result": 2841.4,
+                "amount": 500.0
+            },
+            "timestamp": "2025-04-26T21:34:51.507417400"
+        }
+   ]
+   ```
 
 ---
 
