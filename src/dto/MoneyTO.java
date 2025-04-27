@@ -10,5 +10,6 @@ public record MoneyTO(
     @SerializedName("conversion_rate")
     double conversionRate,
     @SerializedName("conversion_result")
-    double conversionResult
+    double conversionResult,
+    double amount
 ) {}

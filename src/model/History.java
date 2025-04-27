@@ -119,9 +119,10 @@ public class History {
         } else {
             
             message += """
-                       \n------------------- HISTORIAL -------------------
+                       
+                       --------------- HISTORIAL ---------------
                         📌 Conversión realizada:
-                       --------------------------------------------------
+                       -----------------------------------------
                        """;
             StringBuilder sb = new StringBuilder();
             
@@ -145,10 +146,9 @@ public class History {
         }
         
         info = """
-               \n--------------------------------------------------
                %s
-               --------------------------------------------------
-               \n""".formatted(message);
+               -----------------------------------------
+               """.formatted(message);
         
         System.out.println(info);
     }
