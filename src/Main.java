@@ -1,5 +1,10 @@
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
+import dto.ErrorInfo;
+import dto.JsonConvert;
+import dto.MenuTO;
+import dto.MoneyTO;
+import model.History;
+import model.Money;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -58,6 +63,9 @@ public class Main {
                     amount = getAmountToConvert();
                     getRequest("COP/USD/", amount);
                     break;
+                case 20:
+                    History.showHistory();
+                    break;
             }
         }
         while (option != 0);
@@ -67,62 +75,60 @@ public class Main {
     
     private static void showMenu() {
         StringBuilder menuInfo = new StringBuilder();
-        LinkedList<Menu> menuList = menuList();
+        LinkedList<MenuTO> menuList = menuList();
         
         menuInfo.append("----------------------------------------\n");
         menuInfo.append("|  BIENVENIDO AL CONVERSOR DE MONEDAS  |\n");
         menuInfo.append("----------------------------------------\n");
         
-        for (Menu menu : menuList) {
+        for (MenuTO menu : menuList) {
             menuInfo.append("| %s: %s|\n".formatted(menu.getKey(), menu.getValue()));
         }
         
         System.out.println(menuInfo);
     }
     
-    private static Integer getOption() {
+    private static int getOption() {
         try {
             System.out.print("Elija una opción válida: ");
             int option = Integer.parseInt(sc.nextLine());
             
-            if (option <= 0) option = 0;
-            else {
-                if (menuList().get(option - 1).getKey() != option) {
-                    System.out.println("\n******************************************");
-                    System.out.println("❌ Opción incorrecta. Vuelva a intentarlo.");
-                    System.out.println("******************************************\n");
-                }
+            boolean exists = menuList().stream().anyMatch(menu -> menu.getKey() == option);
+            
+            if (!exists) {
+                ErrorInfo.showError("Opción incorrecta. Vuelva a intentarlo.");
+                return -1;
             }
             return option;
         } catch (NumberFormatException ex) {
-            System.out.println("\n*************************************");
-            System.out.println("❌ El carácter digitado no es valido.");
-            System.out.println("*************************************\n");
-            
+            ErrorInfo.showError("El carácter digitado no es valido.");
         } catch (Exception ex) {
-            System.out.println("Ocurrió un error inesperado.");
+            ErrorInfo.globalError();
         }
-        return 9;
+        return -1;
     }
     
-    private static Double getAmountToConvert() {
-        try {
-            double value;
-            do {
-                System.out.print("Digite el monto a convertir: ");
-                value = Double.parseDouble(sc.nextLine());
+    private static double getAmountToConvert() {
+        double value = -1;
+        boolean validInput = false;
+        
+        while (!validInput) {
+            System.out.print("Digite el monto a convertir: ");
+            String input = sc.nextLine();
+            try {
+                value = Double.parseDouble(input);
+                if (value > 0) {
+                    validInput = true;
+                } else {
+                    ErrorInfo.showError("El monto debe ser un número positivo.");
+                }
+            } catch (NumberFormatException ex) {
+                ErrorInfo.showError("El carácter digitado no es un número válido.");
+            } catch (Exception ex) {
+                ErrorInfo.globalError();
             }
-            while (value <= 0);
-            
-            return value;
-        } catch (NumberFormatException ex) {
-            System.out.println("\n*********************************************");
-            System.out.println("❌ El carácter digitado no es un número válido.");
-            System.out.println("*********************************************\n");
-        } catch (Exception ex) {
-            System.out.println("Ocurrió un error inesperado.");
         }
-        return 0.0;
+        return value;
     }
     
     private static String urlEncoder(double value) {
@@ -143,14 +149,7 @@ public class Main {
             
             String body = response.body();
             
-            Gson
-                gson =
-                new Gson()
-                    .newBuilder()
-                    .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CASE_WITH_UNDERSCORES)
-                    .setPrettyPrinting()
-                    .create();
-            
+            Gson gson = JsonConvert.getGson();
             
             MoneyTO coin = gson.fromJson(body, MoneyTO.class);
             Money money = new Money(
@@ -160,49 +159,47 @@ public class Main {
                                     coin.conversionResult()
             );
             
-            System.out.print(showChange(money, amount));
+            showChange(money, amount);
+            History.saveToHistory(money);
         } catch (IllegalArgumentException ex) {
-            System.out.println("\n************************************************");
-            System.out.println("❌ Error en la URL, verifique el formato correcto.");
-            System.out.println("************************************************\n");
+            ErrorInfo.showError("Error en la URL, verifique el formato correcto.");
         } catch (Exception ex) {
-            System.out.println("\n*****************************");
-            System.out.println("❌ Ocurrió un error inesperado.");
-            System.out.println("*****************************\n");
+            ErrorInfo.globalError();
         }
     }
     
-    private static String showChange(Money money, double amount) {
-        return """
-               
-               ----------------------------------------
-               |          CONVERSIÓN EXITOSA          |
-               ----------------------------------------
-               | Valor en [%s]: %.2f
-               | Convertido a [%s]: %.2f
-               ----------------------------------------
-               
-               """.formatted(
+    private static void showChange(Money money, double amount) {
+        String info = """
+                      
+                      ----------------------------------------
+                      |          CONVERSIÓN EXITOSA          |
+                      ----------------------------------------
+                      | Valor en [%s]: %.2f
+                      | Convertido a [%s]: %.2f
+                      ----------------------------------------
+                      
+                      """.formatted(
             money.getBaseCode(),
             amount,
             money.getTargetCode(),
             money.getConversionResult()
         );
-        
+        System.out.println(info);
     }
     
-    private static LinkedList<Menu> menuList() {
-        LinkedList<Menu> options = new LinkedList<>();
+    private static LinkedList<MenuTO> menuList() {
+        LinkedList<MenuTO> options = new LinkedList<>();
         
-        options.add(new Menu(1, "Dólar < a > Sol Peruano           "));
-        options.add(new Menu(2, "Sol Peruano < a > Dólar           "));
-        options.add(new Menu(3, "Dólar < a > Peso Argentino        "));
-        options.add(new Menu(4, "Peso Argentino < a > Dólar        "));
-        options.add(new Menu(5, "Dólar < a > Real Brasileño        "));
-        options.add(new Menu(6, "Real Brasileño < a > Dólar        "));
-        options.add(new Menu(7, "Dólar < a > Peso Colombiano       "));
-        options.add(new Menu(8, "Peso Colombiano < a > Dólar       "));
-        options.add(new Menu(0, "Salir                             "));
+        options.add(new MenuTO(1, "Dólar < a > Sol Peruano           "));
+        options.add(new MenuTO(2, "Sol Peruano < a > Dólar           "));
+        options.add(new MenuTO(3, "Dólar < a > Peso Argentino        "));
+        options.add(new MenuTO(4, "Peso Argentino < a > Dólar        "));
+        options.add(new MenuTO(5, "Dólar < a > Real Brasileño        "));
+        options.add(new MenuTO(6, "Real Brasileño < a > Dólar        "));
+        options.add(new MenuTO(7, "Dólar < a > Peso Colombiano       "));
+        options.add(new MenuTO(8, "Peso Colombiano < a > Dólar       "));
+        options.add(new MenuTO(20, "Historial                        "));
+        options.add(new MenuTO(0, "Salir                             "));
         
         return options;
     }
