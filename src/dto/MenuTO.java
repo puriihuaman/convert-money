@@ -1,8 +1,10 @@
-public class Menu {
+package dto;
+
+public class MenuTO {
     private int key;
     private String value;
     
-    public Menu(int key, String value) {
+    public MenuTO(int key, String value) {
         this.key = key;
         this.value = value;
     }

@@ -1,3 +1,5 @@
+package model;
+
 public class Money {
     private String baseCode;
     private String targetCode;
