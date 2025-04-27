@@ -2,7 +2,7 @@
 
 **Convert Money** es una aplicación desarrollada en Java que permite convertir valores entre
 diferentes monedas, utilizando el tipo de cambio en tiempo real proporcionado por la
-API [ExchangerRate-API](https://app.exchangerate-api.com/dashboard).
+API [ExchangerRate-API](https://app.exchangerate-api.com).
 
 ---
 
@@ -68,12 +68,17 @@ convert-money/
    ```bash
    cd convert-money
    ```
-2. Configurar variables de entorno
-   Crear un archivo `.env` en la raíz del proyecto y agregar las variables necesarias siguiendo
-   el formato del archivo `.env.demo`.
-   ```
-   SECRET_KEY=123237aada81baaxx... 
-   ```
+2. Configurar la clave de la API:
+   Esta aplicación requiere una clave de API para acceder a los datos de ExchangerRate-API.  
+   Aquí te explicó como obtenerla y configurarla:
+    - **Registrarte**: Ve al sitio web de [ExchangerRate-API](https://app.exchangerate-api.com)
+      y crea una cuenta con tu correo electrónico para obtener una clave de API.
+    - **Formato de la clave**: La API KEY que recibirás por correo electrónico tendrá un formato
+      similar a este `123237aada81baaxx...`.
+    - **Configuración en el código**: Una vez que tengas tu clave, localiza la clase
+      `src/model/RequestApi` dentro de la estructura del proyecto. Abre la clase y busca la variable
+      `API_KEY`. Reemplaza el valor existente con tu API KEY (La API KEY que se encuentra en el
+      código estará deshabilitada).
 3. Ejecutar la aplicación
     - Abre el proyecto en tu IDE.
     - Haz clic derecho en la clase `main`.
